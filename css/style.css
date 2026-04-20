@@ -1,0 +1,855 @@
+/* ============================================================
+   NATASHA BILOUS · PERSONAL PAGE
+   Style: POST-APOCALYPTIC TERMINAL / INDUSTRIAL HUD
+   ────────────────────────────────────────────────────────────
+   ДВА СТИЛІ ЧЕРЕЗ .dark / .light на <body>:
+   - DARK (default): термінальний зелений, сканлайни, monospace-all
+   - LIGHT: "польовий блокнот" сталкера — жовтий пергамент,
+            серіфні заголовки, рукописно-машинна естетика
+   Гумова верстка, три breakpoints (480/900/1200).
+   ============================================================ */
+
+/* --- RESET ----------------------------------- */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; -webkit-text-size-adjust: 100%; }
+img, svg, iframe { display: block; max-width: 100%; }
+button { font: inherit; cursor: pointer; border: none; background: none; color: inherit; }
+a { color: inherit; text-decoration: none; }
+ul, ol { list-style: none; }
+
+/* ============================================================
+   ТЕМА 1 — DARK TERMINAL (default)
+   Все моноширинне, сканлайни, зелений фосфор CRT
+   ============================================================ */
+body.dark {
+  --font-display: 'VT323', 'IBM Plex Mono', monospace;
+  --font-body:    'IBM Plex Mono', 'Courier New', monospace;
+  --font-mono:    'IBM Plex Mono', monospace;
+  --h1-transform: uppercase;
+  --h2-transform: uppercase;
+
+  --bg:          #0a0d08;
+  --bg-alt:      #121810;
+  --ink:         #c0ffa0;     /* phosphor green */
+  --ink-soft:    #608050;
+  --ink-dim:     #3a4a2a;
+  --accent:      #ffcc33;     /* warning yellow */
+  --accent-2:    #ff4020;     /* radiation red */
+  --line:        #3a4a2a;
+  --card:        #0f1308;
+
+  --table-head:  #1a2410;
+  --table-head-t:#ffcc33;
+  --table-row:   #0f1308;
+  --table-row-2: #141a0e;
+  --table-border:#3a4a2a;
+
+  --scanline-opacity: 0.06;
+  --shadow: 0 0 0 2px var(--line), 8px 8px 0 rgba(0,0,0,0.5);
+  --tag-bg:  transparent;
+  --tag-border: var(--accent);
+}
+
+/* ============================================================
+   ТЕМА 2 — LIGHT FIELD NOTES (сталкерський блокнот)
+   Серіфні заголовки, пергамент, "рукописно-машинна" естетика
+   ============================================================ */
+body.light {
+  --font-display: 'Rozha One', 'Playfair Display', Georgia, serif;
+  --font-body:    'Cutive Mono', 'Courier New', monospace;
+  --font-mono:    'Cutive Mono', 'Courier New', monospace;
+  --h1-transform: none;
+  --h2-transform: none;
+
+  --bg:          #e8dcb8;     /* aged paper */
+  --bg-alt:      #dcc89c;
+  --ink:         #2a1810;
+  --ink-soft:    #6a4a28;
+  --ink-dim:     #a88a5c;
+  --accent:      #8a2020;     /* oxblood red stamp */
+  --accent-2:    #2a4a1c;     /* dark army green */
+  --line:        #2a1810;
+  --card:        #f0e6c8;
+
+  --table-head:  #2a1810;
+  --table-head-t:#e8dcb8;
+  --table-row:   #f0e6c8;
+  --table-row-2: #dcc89c;
+  --table-border:#2a1810;
+
+  --scanline-opacity: 0;
+  --shadow: 6px 6px 0 var(--line);
+  --tag-bg:  var(--card);
+  --tag-border: var(--line);
+}
+
+/* ============================================================
+   БАЗОВА ТИПОГРАФІКА
+   ============================================================ */
+body {
+  background: var(--bg);
+  color: var(--ink);
+  font-family: var(--font-body);
+  line-height: 1.55;
+  min-height: 100vh;
+  transition: background-color 0.4s ease, color 0.4s ease;
+  overflow-x: hidden;
+  position: relative;
+}
+
+h1, h2, h3 { font-family: var(--font-display); line-height: 1.08; letter-spacing: 0.01em; }
+h1 { font-weight: 400; text-transform: var(--h1-transform); }
+h2 { font-weight: 400; text-transform: var(--h2-transform); }
+h3 { font-weight: 400; }
+
+p { font-family: var(--font-body); }
+
+/* DARK: сканлайни — фонова горизонтальна сітка як на CRT */
+body.dark::before {
+  content: '';
+  position: fixed; inset: 0; pointer-events: none; z-index: 9998;
+  background: repeating-linear-gradient(
+    0deg,
+    transparent 0,
+    transparent 2px,
+    rgba(192, 255, 160, var(--scanline-opacity)) 2px,
+    rgba(192, 255, 160, var(--scanline-opacity)) 3px
+  );
+}
+/* DARK: лёгка вінетка */
+body.dark::after {
+  content: '';
+  position: fixed; inset: 0; pointer-events: none; z-index: 9997;
+  background: radial-gradient(ellipse at center, transparent 40%, rgba(0,0,0,0.5) 100%);
+}
+
+/* LIGHT: текстура пожовклого паперу через filter */
+body.light { background-image:
+  radial-gradient(ellipse at 15% 20%, rgba(168, 138, 92, 0.15) 0%, transparent 40%),
+  radial-gradient(ellipse at 85% 80%, rgba(138, 32, 32, 0.08) 0%, transparent 50%);
+}
+
+/* ============================================================
+   CONTAINER
+   ============================================================ */
+.container { width: 100%; max-width: 1200px; margin: 0 auto; padding: 0 clamp(1rem, 4vw, 3rem); }
+
+/* ============================================================
+   HEADER — HUD-стиль
+   ============================================================ */
+.site-header {
+  position: sticky; top: 0; z-index: 100;
+  background: var(--bg);
+  border-bottom: 1px solid var(--line);
+}
+body.dark .site-header { background: rgba(10, 13, 8, 0.95); backdrop-filter: blur(6px); }
+body.light .site-header { background: rgba(232, 220, 184, 0.95); border-bottom: 3px double var(--line); }
+
+.header-inner {
+  display: flex; align-items: center; justify-content: space-between;
+  gap: 1rem; padding: 0.8rem 0; flex-wrap: wrap;
+}
+
+.logo { display: inline-flex; align-items: center; gap: 0.6rem; }
+.logo-mark {
+  display: inline-grid; place-items: center;
+  width: 2.4rem; height: 2.4rem;
+  font-family: var(--font-display);
+  font-size: 1.3rem;
+  font-weight: 400;
+}
+body.dark .logo-mark {
+  background: var(--accent); color: var(--bg);
+  border: 2px solid var(--accent);
+  box-shadow: 0 0 10px var(--accent);
+}
+body.light .logo-mark {
+  background: transparent;
+  color: var(--accent);
+  border: 2px solid var(--accent);
+}
+.logo-text {
+  font-family: var(--font-mono);
+  font-size: 0.78rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  opacity: 0.7;
+}
+
+.site-nav ul { display: flex; gap: 1.3rem; flex-wrap: wrap; }
+.site-nav a {
+  font-family: var(--font-mono);
+  font-size: 0.82rem;
+  text-transform: uppercase; letter-spacing: 0.05em;
+  padding: 0.3rem 0.1rem;
+  position: relative;
+  transition: color 0.2s;
+}
+.site-nav a::before { content: '> '; opacity: 0; transition: opacity 0.2s; }
+.site-nav a:hover::before { opacity: 1; }
+.site-nav a:hover { color: var(--accent); }
+
+.theme-switch { display: inline-flex; border: 1px solid var(--line); }
+.theme-btn {
+  padding: 0.45rem 0.8rem;
+  font-family: var(--font-mono);
+  font-size: 0.72rem; text-transform: uppercase; letter-spacing: 0.06em;
+  transition: background 0.2s, color 0.2s;
+}
+.theme-btn + .theme-btn { border-left: 1px solid var(--line); }
+.theme-btn.is-active { background: var(--accent); color: var(--bg); }
+
+/* ============================================================
+   HERO — ігровий "intro screen"
+   ============================================================ */
+.hero {
+  padding: clamp(3rem, 10vw, 7rem) 0 clamp(2rem, 6vw, 5rem);
+  position: relative;
+  border-bottom: 1px solid var(--line);
+}
+
+/* DARK: HUD-рамка навколо HERO */
+body.dark .hero::before {
+  content: '[ INTRO ]';
+  position: absolute; top: 1rem; right: clamp(1rem, 4vw, 3rem);
+  font-family: var(--font-mono); font-size: 0.72rem;
+  color: var(--accent);
+  letter-spacing: 0.15em;
+  padding: 0.3rem 0.6rem;
+  border: 1px solid var(--accent);
+}
+body.light .hero::before {
+  content: '№ 001 — ОСОБОВА СПРАВА';
+  position: absolute; top: 1rem; right: clamp(1rem, 4vw, 3rem);
+  font-family: var(--font-mono); font-size: 0.72rem;
+  color: var(--accent);
+  padding: 0.4rem 0.8rem;
+  border: 2px solid var(--accent);
+  transform: rotate(2deg);
+  background: var(--card);
+}
+
+.hero-meta {
+  display: flex; justify-content: space-between; flex-wrap: wrap;
+  gap: 0.5rem; margin-bottom: 2rem;
+  font-family: var(--font-mono); font-size: 0.8rem;
+  color: var(--ink-soft);
+  text-transform: uppercase; letter-spacing: 0.08em;
+}
+
+.eyebrow { font-family: var(--font-mono); font-size: 0.78rem; text-transform: uppercase; letter-spacing: 0.08em; }
+
+.hero-title {
+  font-size: clamp(2.5rem, 10vw, 7rem);
+  line-height: 0.95;
+  margin-bottom: 1.5rem;
+}
+.hero-title-accent {
+  color: var(--accent);
+  display: inline-block;
+  position: relative;
+}
+/* DARK: курсорний "пульсуючий" акцент */
+body.dark .hero-title-accent::after {
+  content: '_';
+  color: var(--ink);
+  animation: blink-cursor 1s step-end infinite;
+  margin-left: 0.1em;
+}
+@keyframes blink-cursor { 0%, 49% { opacity: 1; } 50%, 100% { opacity: 0; } }
+
+.hero-lead {
+  max-width: 58ch;
+  font-size: clamp(0.95rem, 1.6vw, 1.1rem);
+  color: var(--ink-soft);
+  margin-bottom: 2.5rem;
+  line-height: 1.6;
+}
+
+.hero-contact {
+  display: flex; align-items: baseline; gap: 1rem; flex-wrap: wrap;
+  padding: 0.8rem 0;
+  border-top: 1px dashed var(--line);
+  border-bottom: 1px dashed var(--line);
+  margin-bottom: 2rem;
+  font-family: var(--font-mono);
+}
+.contact-label {
+  color: var(--accent);
+  font-size: 0.82rem;
+  text-transform: uppercase;
+}
+.contact-label::before { content: '> '; }
+.contact-link {
+  font-size: clamp(1rem, 2.4vw, 1.4rem);
+  font-family: var(--font-mono);
+  border-bottom: 1px dashed currentColor;
+  word-break: break-all;
+}
+.contact-link:hover { color: var(--accent); }
+
+.hero-tags {
+  display: flex; flex-wrap: wrap; gap: 0.6rem;
+  font-family: var(--font-mono);
+}
+.tag {
+  display: inline-block;
+  padding: 0.35rem 0.9rem;
+  border: 1px solid var(--tag-border);
+  background: var(--tag-bg);
+  font-size: 0.82rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--accent);
+}
+.tag::before { content: '[ '; }
+.tag::after  { content: ' ]'; }
+body.light .tag { transform: rotate(-1deg); }
+body.light .tag:nth-child(2) { transform: rotate(1deg); }
+
+/* ============================================================
+   СЕКЦІЯ (базова)
+   ============================================================ */
+.section { padding: clamp(3rem, 7vw, 5rem) 0; border-bottom: 1px solid var(--line); }
+.section-head { margin-bottom: clamp(2rem, 5vw, 3rem); position: relative; }
+.section-num {
+  display: inline-block;
+  font-family: var(--font-mono);
+  color: var(--accent);
+  font-size: 0.8rem;
+  letter-spacing: 0.1em;
+  margin-bottom: 0.6rem;
+}
+.section-num::before { content: '// '; }
+.section-title {
+  font-size: clamp(1.8rem, 5vw, 3rem);
+  margin-bottom: 0.4rem;
+}
+.section-sub {
+  color: var(--ink-soft);
+  font-family: var(--font-mono);
+  font-size: 0.85rem;
+  letter-spacing: 0.03em;
+}
+
+/* ============================================================
+   ТАБЛИЦЯ — MISSION LOG
+   ============================================================ */
+.sr-only { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0,0,0,0); }
+
+.table-wrap {
+  overflow-x: auto;
+  border: 1px solid var(--table-border);
+  background: var(--card);
+  position: relative;
+}
+/* LIGHT: додаємо штамп зверху, як в реальному досьє */
+body.light .table-wrap::before {
+  content: 'COHFIDENTIAL';
+  position: absolute; top: 0.5rem; right: 0.7rem;
+  font-family: var(--font-mono);
+  font-size: 0.7rem;
+  letter-spacing: 0.15em;
+  color: var(--accent);
+  border: 1.5px solid var(--accent);
+  padding: 0.15rem 0.5rem;
+  transform: rotate(8deg);
+  z-index: 2;
+  opacity: 0.85;
+}
+
+.data-table { width: 100%; border-collapse: collapse; min-width: 520px; }
+.data-table thead { background: var(--table-head); color: var(--table-head-t); }
+.data-table th {
+  text-align: left;
+  padding: 0.8rem 1rem;
+  font-family: var(--font-mono);
+  font-size: 0.78rem;
+  text-transform: uppercase; letter-spacing: 0.08em;
+  font-weight: 400;
+  border-bottom: 1px solid var(--table-border);
+}
+.data-table td {
+  padding: 0.8rem 1rem;
+  border-top: 1px solid var(--table-border);
+  font-family: var(--font-mono);
+  font-size: 0.9rem;
+}
+.data-table tbody tr:nth-child(even) { background: var(--table-row-2); }
+body.dark .data-table tbody tr:hover {
+  background: var(--ink-dim); color: var(--accent);
+  box-shadow: inset 3px 0 0 var(--accent);
+}
+body.light .data-table tbody tr:hover {
+  background: var(--ink); color: var(--bg);
+}
+body.light .data-table tbody tr:hover .grade { background: var(--bg); color: var(--ink); border-color: var(--bg); }
+
+.grade {
+  display: inline-block;
+  min-width: 3rem; padding: 0.15rem 0.6rem; text-align: center;
+  font-family: var(--font-mono); font-weight: 700;
+  border: 1px solid currentColor;
+  transition: all 0.2s;
+}
+.grade--a { color: var(--accent); }
+body.dark .grade--a { background: rgba(255,204,51,0.1); }
+body.light .grade--a { background: transparent; }
+.grade--b { color: var(--ink-soft); }
+
+/* ============================================================
+   FAVORITES — лог + цитата
+   ============================================================ */
+.movies-list { display: flex; flex-direction: column; }
+.movies-list a {
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  gap: 1rem; align-items: baseline;
+  padding: 0.9rem 0;
+  border-bottom: 1px dashed var(--line);
+  transition: padding-left 0.25s, color 0.25s;
+  font-family: var(--font-mono);
+}
+.movies-list a:hover { padding-left: 0.8rem; color: var(--accent); }
+body.dark .movies-list a:hover::before {
+  content: '▶';
+  position: absolute; margin-left: -1rem;
+}
+.movie-num { font-size: 0.8rem; color: var(--ink-soft); }
+.movie-title { font-size: clamp(1rem, 1.8vw, 1.2rem); }
+.movie-year { font-size: 0.8rem; color: var(--ink-soft); }
+
+.favorites-quote {
+  background: var(--card);
+  border: 1px solid var(--line);
+  padding: clamp(1.3rem, 3vw, 2rem);
+  position: relative;
+  font-family: var(--font-mono);
+}
+body.dark .favorites-quote {
+  border-left: 3px solid var(--accent);
+  background: linear-gradient(135deg, rgba(255,204,51,0.03) 0%, transparent 100%);
+}
+body.light .favorites-quote { box-shadow: var(--shadow); }
+
+.quote-mark { display: none; }
+.favorites-quote blockquote::before {
+  content: '[ TRANSMISSION ]';
+  display: block;
+  font-family: var(--font-mono); font-size: 0.7rem;
+  color: var(--accent); letter-spacing: 0.15em;
+  margin-bottom: 1rem;
+}
+body.light .favorites-quote blockquote::before { content: '— ПОМІТКА НА ПОЛЯХ —'; }
+
+.favorites-quote p {
+  font-size: clamp(0.95rem, 1.8vw, 1.1rem);
+  line-height: 1.5;
+  margin-bottom: 1rem;
+}
+.favorites-quote footer {
+  font-size: 0.8rem;
+  color: var(--accent);
+  padding-top: 0.6rem;
+  border-top: 1px dashed var(--line);
+}
+
+/* ============================================================
+   MOODS — PSY-MOOD MONITOR (радіаційні шкали)
+   ============================================================ */
+.mood-panel {
+  border: 1px solid var(--line);
+  background: var(--card);
+  font-family: var(--font-mono);
+}
+body.dark .mood-panel {
+  box-shadow: inset 0 0 0 1px rgba(192,255,160,0.1), 0 0 30px rgba(192,255,160,0.06);
+}
+body.light .mood-panel { box-shadow: var(--shadow); }
+
+.mood-panel-head, .mood-panel-foot {
+  display: flex; justify-content: space-between; align-items: center;
+  padding: 0.7rem 1.2rem;
+  font-size: 0.75rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--ink-soft);
+}
+.mood-panel-head {
+  border-bottom: 1px solid var(--line);
+  background: var(--bg-alt);
+  color: var(--accent);
+}
+.mood-panel-foot {
+  border-top: 1px dashed var(--line);
+  font-size: 0.7rem;
+}
+.panel-status { color: var(--accent-2); }
+body.dark .panel-status { animation: blink 1.4s infinite; color: #40ff40; }
+
+.mood-channel {
+  display: grid;
+  grid-template-columns: 1fr 2fr auto;
+  gap: 1.2rem;
+  align-items: center;
+  padding: 1.2rem 1.2rem;
+  border-bottom: 1px dashed var(--line);
+}
+.mood-channel:last-of-type { border-bottom: 1px solid var(--line); }
+
+.mood-channel-label { display: flex; flex-direction: column; gap: 0.2rem; }
+.mood-ch-id {
+  font-size: 0.7rem;
+  color: var(--accent);
+  letter-spacing: 0.1em;
+  margin-bottom: 0.1rem;
+}
+.mood-ch-name {
+  font-family: var(--font-display);
+  font-size: 1.5rem;
+  color: var(--ink);
+  line-height: 1;
+  text-transform: var(--h2-transform);
+}
+.mood-ch-desc {
+  font-family: var(--font-mono);
+  font-size: 0.82rem;
+  color: var(--ink-soft);
+  line-height: 1.3;
+  margin-top: 0.3rem;
+}
+
+/* Шкала — основа */
+.mood-bar {
+  position: relative;
+  height: 28px;
+  background: var(--bg);
+  border: 1px solid var(--line);
+  overflow: hidden;
+}
+body.dark .mood-bar {
+  background: #0a0d08;
+  box-shadow: inset 0 1px 3px rgba(0,0,0,0.6);
+}
+
+/* Заповнення шкали */
+.mood-bar-fill {
+  position: absolute;
+  top: 0; left: 0; bottom: 0;
+  width: var(--fill);
+  transition: width 1s cubic-bezier(0.22, 1, 0.36, 1);
+}
+.mood-fill--high {
+  background: linear-gradient(90deg, #40c040 0%, #a0e040 60%, #ffcc33 100%);
+  box-shadow: 0 0 10px rgba(255, 204, 51, 0.5);
+}
+.mood-fill--mid {
+  background: linear-gradient(90deg, #40c040 0%, #c0c040 50%, #ffaa30 100%);
+  box-shadow: 0 0 10px rgba(255, 170, 48, 0.4);
+}
+.mood-fill--low {
+  background: linear-gradient(90deg, #4a6a80 0%, #5a7a90 100%);
+  box-shadow: 0 0 6px rgba(90, 122, 144, 0.3);
+}
+
+/* Тіки — вертикальні поділки поверх шкали */
+.mood-bar-ticks {
+  position: absolute; inset: 0;
+  display: grid;
+  grid-template-columns: repeat(10, 1fr);
+  pointer-events: none;
+}
+.mood-bar-ticks span {
+  border-right: 1px solid rgba(0, 0, 0, 0.35);
+}
+body.dark .mood-bar-ticks span { border-color: rgba(0, 0, 0, 0.6); }
+.mood-bar-ticks span:last-child { border-right: none; }
+
+/* Значення справа */
+.mood-channel-value {
+  font-family: var(--font-mono);
+  font-size: 0.95rem;
+  color: var(--accent);
+  min-width: 90px;
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+body.dark .mood-channel-value {
+  color: #60ff40;
+  text-shadow: 0 0 6px rgba(96, 255, 64, 0.5);
+}
+
+@media (max-width: 768px) {
+  .mood-channel {
+    grid-template-columns: 1fr;
+    gap: 0.7rem;
+  }
+  .mood-channel-value { text-align: left; }
+}
+
+/* QUOTE — окрема секція */
+.quote-section .favorites-quote {
+  max-width: 800px;
+  margin: 0 auto;
+}
+/* Коли цитата йде першою секцією — великий вступний блок */
+.quote-first {
+  padding: clamp(4rem, 10vw, 8rem) 0 clamp(3rem, 7vw, 5rem);
+  text-align: center;
+}
+.quote-first .section-head { text-align: center; }
+.quote-first .favorites-quote {
+  max-width: 720px;
+  margin: 0 auto;
+  text-align: left;
+}
+.quote-first .favorites-quote p {
+  font-size: clamp(1.1rem, 2.2vw, 1.4rem);
+}
+
+/* Hero як середня секція (не перша) — без гігантського верхнього padding */
+.hero--section {
+  padding: clamp(3rem, 7vw, 5rem) 0 clamp(2.5rem, 5vw, 4rem);
+}
+.hero--section::before { top: 1.5rem; }
+
+/* ============================================================
+   SLIDESHOW — окружено HUD-рамкою в DARK
+   ============================================================ */
+.slider {
+  position: relative;
+  overflow: hidden;
+  border: 1px solid var(--line);
+  background: #000;
+  aspect-ratio: 16 / 9;
+}
+body.dark .slider {
+  box-shadow: 0 0 0 1px var(--ink-dim), 0 0 30px rgba(192,255,160,0.1);
+}
+
+.slider-track {
+  display: flex;
+  height: 100%;
+  transition: transform 0.5s cubic-bezier(0.22, 1, 0.36, 1);
+  will-change: transform;
+}
+.slide {
+  flex: 0 0 100%;
+  position: relative;
+  overflow: hidden;
+}
+.slide img {
+  width: 100%; height: 100%;
+  object-fit: cover; object-position: center;
+}
+body.dark .slide img {
+  filter: brightness(0.9) contrast(1.05) saturate(0.85);
+}
+
+.slide figcaption {
+  position: absolute; left: 0; right: 0; bottom: 0;
+  padding: 0.7rem 1rem;
+  background: linear-gradient(180deg, transparent 0%, rgba(0,0,0,0.85) 100%);
+  color: #e0e0e0;
+  font-family: var(--font-mono);
+  font-size: 0.82rem;
+  letter-spacing: 0.03em;
+}
+.slide .credit { opacity: 0.7; font-size: 0.7rem; display: block; margin-top: 0.2rem; }
+
+.slider-btn {
+  position: absolute; top: 50%; transform: translateY(-50%);
+  width: 2.8rem; height: 2.8rem;
+  background: rgba(0,0,0,0.6);
+  color: var(--accent);
+  border: 1px solid var(--accent);
+  font-family: var(--font-mono); font-size: 1.4rem; line-height: 1;
+  display: grid; place-items: center;
+  transition: background 0.2s;
+  z-index: 2;
+}
+.slider-btn:hover { background: var(--accent); color: #000; }
+.slider-btn--prev { left: 0.8rem; }
+.slider-btn--next { right: 0.8rem; }
+
+.slider-dots {
+  position: absolute; bottom: 0.7rem; left: 50%; transform: translateX(-50%);
+  display: flex; gap: 0.4rem; z-index: 2;
+}
+.slider-dot {
+  width: 8px; height: 8px;
+  background: rgba(255,255,255,0.35);
+  border: 1px solid rgba(255,255,255,0.7);
+  padding: 0;
+  transition: background 0.2s, transform 0.2s;
+}
+.slider-dot.is-active {
+  background: var(--accent);
+  transform: scale(1.25);
+  border-color: var(--accent);
+  box-shadow: 0 0 6px var(--accent);
+}
+
+.slider-note {
+  margin-top: 0.8rem;
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  color: var(--ink-soft);
+  text-align: center;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+/* ============================================================
+   LOCATION — Харків
+   ============================================================ */
+.location-grid {
+  display: grid;
+  grid-template-columns: 1fr 1.2fr;
+  gap: clamp(2rem, 4vw, 3rem);
+  align-items: start;
+}
+.location-photo {
+  margin-bottom: 1.2rem;
+  border: 1px solid var(--line);
+  overflow: hidden;
+  aspect-ratio: 3 / 2;
+}
+body.light .location-photo { box-shadow: var(--shadow); }
+.location-photo img {
+  width: 100%; height: 100%;
+  object-fit: cover;
+  transition: transform 0.6s;
+}
+.location-photo:hover img { transform: scale(1.03); }
+body.dark .location-photo img { filter: brightness(0.9) saturate(0.9); }
+
+.location-text p {
+  margin-bottom: 1rem;
+  color: var(--ink-soft);
+  font-size: 0.95rem;
+  max-width: 58ch;
+}
+
+.location-facts {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 0.8rem;
+  margin-top: 1.5rem;
+}
+.location-facts li {
+  padding: 0.8rem;
+  border: 1px solid var(--line);
+  background: var(--card);
+  display: flex; flex-direction: column; gap: 0.25rem;
+}
+.location-facts strong {
+  font-family: var(--font-mono);
+  font-size: 0.7rem;
+  text-transform: uppercase;
+  color: var(--accent);
+  font-weight: 400;
+  letter-spacing: 0.08em;
+}
+.location-facts span {
+  font-family: var(--font-display);
+  font-size: 1.2rem;
+}
+.location-map {
+  border: 1px solid var(--line);
+  overflow: hidden;
+  aspect-ratio: 4 / 3;
+  position: relative;
+}
+body.light .location-map { box-shadow: var(--shadow); }
+
+.location-map iframe { width: 100%; height: 100%; border: 0; }
+body.dark .location-map iframe {
+  filter: invert(0.88) hue-rotate(180deg) contrast(0.85) saturate(0.7);
+}
+
+/* ============================================================
+   FOOTER — термінальний статус-бар
+   ============================================================ */
+.site-footer {
+  padding: 1.8rem 0;
+  border-top: 1px solid var(--line);
+  background: var(--bg-alt);
+}
+.footer-inner {
+  display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap;
+  gap: 0.8rem;
+  font-family: var(--font-mono);
+  font-size: 0.78rem;
+  color: var(--ink-soft);
+}
+.footer-inner a { color: var(--accent); border-bottom: 1px dashed currentColor; }
+.footer-inner p::before { content: '[ '; color: var(--accent); }
+.footer-inner p::after  { content: ' ]'; color: var(--accent); }
+
+/* ============================================================
+   ADAPTIVE — ГУМОВА ВЕРСТКА, 3 BREAKPOINTS
+   Desktop ≥ 1201  |  Tablet 901-1200  |  Mobile ≤ 900
+   ============================================================ */
+
+/* TABLET (до 1200) */
+@media (max-width: 1200px) {
+  .container { max-width: 100%; }
+}
+
+/* TABLET (до 900) */
+@media (max-width: 900px) {
+  .favorites-grid,
+  .location-grid { grid-template-columns: 1fr; }
+  .moods-grid { grid-template-columns: repeat(2, 1fr); }
+  .hero-title { font-size: clamp(2rem, 9vw, 5rem); }
+  .site-nav a { font-size: 0.76rem; }
+  .section { padding: clamp(2.5rem, 5vw, 4rem) 0; }
+  .slider { aspect-ratio: 4 / 3; }
+}
+
+/* MOBILE (до 480) */
+@media (max-width: 480px) {
+  .header-inner { gap: 0.4rem; padding: 0.5rem 0; }
+  .logo-text { display: none; }
+  .site-nav { width: 100%; order: 3; }
+  .site-nav ul {
+    gap: 0.4rem; overflow-x: auto; flex-wrap: nowrap;
+    padding-bottom: 0.3rem;
+  }
+  .site-nav a { font-size: 0.68rem; white-space: nowrap; }
+  .theme-btn { padding: 0.3rem 0.5rem; font-size: 0.65rem; }
+
+  .hero { padding-top: 2rem; }
+  .hero::before { font-size: 0.65rem; top: 0.7rem; }
+  .hero-title { font-size: clamp(2rem, 13vw, 3.5rem); }
+  .hero-meta { flex-direction: column; gap: 0.2rem; }
+
+  .moods-grid { grid-template-columns: 1fr; }
+
+  .data-table th, .data-table td { padding: 0.6rem 0.7rem; font-size: 0.82rem; }
+  .data-table { min-width: 420px; }
+
+  .movies-list a { grid-template-columns: auto 1fr; gap: 0.7rem; padding: 0.7rem 0; }
+  .movie-year { grid-column: 2; font-size: 0.72rem; }
+
+  .slider { aspect-ratio: 3 / 4; }
+  .slider-btn { width: 2.2rem; height: 2.2rem; font-size: 1.1rem; }
+  .slider-btn--prev { left: 0.3rem; }
+  .slider-btn--next { right: 0.3rem; }
+
+  .location-facts { grid-template-columns: 1fr; }
+  .location-facts li { flex-direction: row; justify-content: space-between; align-items: center; }
+
+  .footer-inner {
+    flex-direction: column; text-align: center; font-size: 0.72rem;
+  }
+}
+
+/* REDUCED MOTION */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+  }
+}

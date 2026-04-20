@@ -1,0 +1,82 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1280 720" preserveAspectRatio="xMidYMid slice">
+  <defs>
+    <linearGradient id="sky1" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#1a2025"/>
+      <stop offset="50%" stop-color="#3a3428"/>
+      <stop offset="100%" stop-color="#6b5a3a"/>
+    </linearGradient>
+    <linearGradient id="ground1" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#2a2620"/>
+      <stop offset="100%" stop-color="#0a0808"/>
+    </linearGradient>
+    <radialGradient id="sun1" cx="70%" cy="45%" r="20%">
+      <stop offset="0%" stop-color="#d4a04a" stop-opacity="0.6"/>
+      <stop offset="100%" stop-color="#d4a04a" stop-opacity="0"/>
+    </radialGradient>
+  </defs>
+  <!-- Небо -->
+  <rect width="1280" height="480" fill="url(#sky1)"/>
+  <!-- Сонце крізь хмари -->
+  <ellipse cx="900" cy="320" rx="260" ry="120" fill="url(#sun1)"/>
+  <circle cx="900" cy="320" r="45" fill="#d4a04a" opacity="0.7"/>
+  <!-- Хмари -->
+  <ellipse cx="300" cy="180" rx="180" ry="25" fill="#2a2520" opacity="0.8"/>
+  <ellipse cx="800" cy="120" rx="240" ry="20" fill="#2a2520" opacity="0.7"/>
+  <!-- Далекі силуети будівель Прип'яті -->
+  <g fill="#1a1612" opacity="0.9">
+    <rect x="50" y="340" width="60" height="140"/>
+    <rect x="120" y="360" width="40" height="120"/>
+    <rect x="170" y="320" width="70" height="160"/>
+    <rect x="250" y="350" width="50" height="130"/>
+    <rect x="310" y="370" width="60" height="110"/>
+    <rect x="1000" y="355" width="55" height="125"/>
+    <rect x="1065" y="340" width="45" height="140"/>
+    <rect x="1120" y="360" width="60" height="120"/>
+    <rect x="1190" y="370" width="50" height="110"/>
+    <!-- Вікна -->
+    <g fill="#d4a04a" opacity="0.4">
+      <rect x="60" y="360" width="4" height="4"/>
+      <rect x="75" y="380" width="4" height="4"/>
+      <rect x="180" y="340" width="4" height="4"/>
+      <rect x="1070" y="350" width="4" height="4"/>
+      <rect x="1130" y="370" width="4" height="4"/>
+    </g>
+  </g>
+  <!-- Дерева-силуети -->
+  <g fill="#0a0806" opacity="0.95">
+    <path d="M 430 480 L 435 380 L 440 480 Z"/>
+    <path d="M 470 480 L 478 360 L 485 480 Z"/>
+    <path d="M 500 480 L 506 400 L 512 480 Z"/>
+    <path d="M 810 480 L 818 350 L 826 480 Z"/>
+    <path d="M 870 480 L 875 390 L 881 480 Z"/>
+  </g>
+  <!-- Земля/дорога -->
+  <rect y="480" width="1280" height="240" fill="url(#ground1)"/>
+  <!-- Силует сталкера по центру -->
+  <g transform="translate(640 480)" fill="#050402">
+    <!-- Тіло -->
+    <rect x="-22" y="-115" width="44" height="75" rx="4"/>
+    <!-- Рюкзак -->
+    <rect x="-26" y="-110" width="10" height="55" rx="2"/>
+    <!-- Голова -->
+    <circle cx="0" cy="-135" r="18"/>
+    <!-- Капюшон / протигаз натяк -->
+    <path d="M -20 -140 L -20 -125 L -15 -118 L 15 -118 L 20 -125 L 20 -140 Z" fill="#1a1612"/>
+    <!-- Руки -->
+    <rect x="-30" y="-100" width="8" height="45" rx="3"/>
+    <rect x="22" y="-100" width="8" height="45" rx="3"/>
+    <!-- Зброя в руці (АК) -->
+    <rect x="28" y="-75" width="55" height="5" fill="#2a2520"/>
+    <rect x="40" y="-70" width="8" height="15" fill="#2a2520"/>
+    <!-- Ноги -->
+    <rect x="-18" y="-40" width="14" height="40" rx="2"/>
+    <rect x="4" y="-40" width="14" height="40" rx="2"/>
+  </g>
+  <!-- Зерно/пил -->
+  <g fill="#d4a04a" opacity="0.3">
+    <circle cx="200" cy="450" r="1"/>
+    <circle cx="500" cy="500" r="1"/>
+    <circle cx="780" cy="480" r="1"/>
+    <circle cx="1100" cy="460" r="1"/>
+  </g>
+</svg>

@@ -1,0 +1,303 @@
+/* ============================================================
+   PROJECT PAGE — 3D ЧАЕС + Geiger Counter
+   Style: HUD / CRT Terminal
+   ============================================================ */
+
+.project-hero {
+  padding: clamp(2.5rem, 7vw, 5rem) 0 clamp(1.5rem, 4vw, 3rem);
+  border-bottom: 1px solid var(--line);
+  position: relative;
+}
+body.dark .project-hero::before {
+  content: '[ CLASSIFIED · OBJECT 4 ]';
+  position: absolute; top: 1rem; right: clamp(1rem, 4vw, 3rem);
+  font-family: var(--font-mono); font-size: 0.72rem;
+  color: var(--accent-2);
+  letter-spacing: 0.15em;
+  padding: 0.3rem 0.6rem;
+  border: 1px solid var(--accent-2);
+}
+body.light .project-hero::before {
+  content: 'ЦІЛКОМ ТАЄМНО';
+  position: absolute; top: 1.2rem; right: clamp(1rem, 4vw, 3rem);
+  font-family: var(--font-mono); font-size: 0.75rem;
+  color: var(--accent);
+  padding: 0.3rem 0.6rem;
+  border: 2px solid var(--accent);
+  transform: rotate(3deg);
+  background: var(--card);
+}
+
+.project-title {
+  font-family: var(--font-display);
+  font-size: clamp(2.5rem, 10vw, 7rem);
+  line-height: 0.95; margin: 1rem 0;
+  letter-spacing: 0.01em;
+  text-transform: var(--h1-transform);
+}
+.project-title-accent { color: var(--accent); }
+
+.project-lead {
+  max-width: 62ch;
+  font-size: clamp(0.95rem, 1.6vw, 1.1rem);
+  color: var(--ink-soft);
+  line-height: 1.6;
+}
+
+/* -- КОМПОНУВАННЯ ---------------------------- */
+.project-main {
+  display: grid;
+  grid-template-columns: 1.6fr 1fr;
+  gap: clamp(1.2rem, 3vw, 2rem);
+  padding: clamp(2rem, 5vw, 4rem) clamp(1rem, 4vw, 3rem);
+}
+
+/* -- 3D-СЦЕНА -------------------------------- */
+.scene-wrap {
+  border: 1px solid var(--line);
+  background: var(--card);
+  display: flex; flex-direction: column;
+  overflow: hidden;
+  position: relative;
+}
+body.dark .scene-wrap {
+  box-shadow: 0 0 0 1px var(--ink-dim), 0 0 30px rgba(192,255,160,0.08);
+}
+body.light .scene-wrap { box-shadow: var(--shadow); }
+
+.scene {
+  width: 100%;
+  min-height: 440px;
+  aspect-ratio: 4 / 3;
+  position: relative;
+}
+body.dark .scene { background: linear-gradient(180deg, #1a2030 0%, #0f1510 60%, #0a0d08 100%); }
+body.light .scene { background: linear-gradient(180deg, #b8c4a8 0%, #8a9878 50%, #6a6850 100%); }
+
+.scene canvas { display: block; width: 100%; height: 100%; }
+
+.scene-hint {
+  padding: 0.6rem 1rem;
+  border-top: 1px solid var(--line);
+  font-family: var(--font-mono);
+  font-size: 0.7rem;
+  color: var(--ink-soft);
+  text-align: center;
+  background: var(--bg-alt);
+  letter-spacing: 0.04em;
+}
+.mono { font-family: var(--font-mono); font-size: 0.82rem; letter-spacing: 0.03em; }
+
+/* -- ПАНЕЛЬ ЛІЧИЛЬНИКА (GEIGER COUNTER) ------ */
+.calc-panel {
+  border: 1px solid var(--line);
+  background: var(--card);
+  padding: clamp(1.1rem, 2.5vw, 1.7rem);
+  display: flex; flex-direction: column; gap: 1.1rem;
+}
+body.dark .calc-panel {
+  box-shadow: inset 0 0 0 1px rgba(192,255,160,0.1);
+}
+body.light .calc-panel { box-shadow: var(--shadow); }
+
+.calc-title {
+  font-family: var(--font-display);
+  font-size: 1.5rem;
+  padding-bottom: 0.7rem;
+  border-bottom: 1px solid var(--line);
+  color: var(--accent);
+  text-transform: var(--h2-transform);
+}
+body.dark .calc-title::before { content: '// '; color: var(--ink-soft); }
+
+/* -- GEIGER DISPLAY — класичний зелений LCD -- */
+.geiger-display {
+  background: #050a03;
+  border: 3px solid #1a2a12;
+  padding: 1.3rem 1rem 1rem;
+  text-align: center;
+  position: relative;
+  box-shadow: inset 0 2px 10px rgba(0,0,0,0.75);
+}
+/* Тонка сітка-пікселі на дисплеї */
+.geiger-display::before {
+  content: ''; position: absolute; inset: 10px 10px 40px;
+  pointer-events: none;
+  background: repeating-linear-gradient(
+    0deg,
+    transparent 0, transparent 1px,
+    rgba(96, 255, 64, 0.07) 1px, rgba(96, 255, 64, 0.07) 2px
+  );
+}
+.geiger-value {
+  font-family: var(--font-mono);
+  font-weight: 700;
+  font-size: clamp(2.4rem, 5vw, 3.3rem);
+  color: #60ff40;
+  text-shadow: 0 0 8px #40ff30, 0 0 18px #20a010;
+  letter-spacing: 0.05em;
+  line-height: 1;
+  font-variant-numeric: tabular-nums;
+  transition: color 0.3s, text-shadow 0.3s;
+  position: relative;
+  z-index: 1;
+}
+.geiger-unit {
+  color: #60ff40;
+  font-size: 0.78rem;
+  opacity: 0.75;
+  margin-top: 0.3rem;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  font-family: var(--font-mono);
+  position: relative; z-index: 1;
+}
+
+/* -- LED-індикатори -------------------------- */
+.geiger-leds {
+  display: flex;
+  justify-content: center;
+  gap: 0.8rem;
+  margin-top: 0.9rem;
+  padding-top: 0.7rem;
+  border-top: 1px solid #1a3015;
+  position: relative; z-index: 1;
+}
+.led {
+  width: 11px; height: 11px; border-radius: 50%;
+  background: #0a0a0a;
+  border: 1px solid #0a0a0a;
+  box-shadow: inset 0 1px 2px rgba(0,0,0,0.8);
+  transition: box-shadow 0.2s, background 0.2s;
+}
+.led--safe.is-on {
+  background: #40ff40;
+  box-shadow: 0 0 10px #40ff40, inset 0 0 3px #80ff80;
+}
+.led--warn.is-on {
+  background: #ffcc30;
+  box-shadow: 0 0 12px #ffcc30, inset 0 0 3px #ffdd50;
+  animation: blink 0.6s infinite;
+}
+.led--danger.is-on {
+  background: #ff3020;
+  box-shadow: 0 0 18px #ff3020, inset 0 0 3px #ff6050;
+  animation: blink 0.22s infinite;
+}
+@keyframes blink { 0%,100%{opacity:1;} 50%{opacity:0.3;} }
+
+/* -- РЕЗУЛЬТАТИ ------------------------------ */
+.calc-results {
+  border: 1px solid var(--line);
+  padding: 0.9rem 1.1rem;
+  background: var(--bg-alt);
+  display: flex; flex-direction: column; gap: 0.55rem;
+  font-family: var(--font-mono);
+}
+.result-row {
+  display: flex; justify-content: space-between; align-items: baseline;
+  gap: 0.8rem;
+}
+.result-label {
+  font-size: 0.72rem;
+  text-transform: uppercase;
+  color: var(--ink-soft);
+  letter-spacing: 0.06em;
+}
+.result-label::before { content: '> '; color: var(--accent); }
+.result-value {
+  font-size: clamp(0.9rem, 1.5vw, 1.05rem);
+  font-variant-numeric: tabular-nums;
+}
+.result-value--accent { color: var(--accent); }
+
+/* -- ЗОНИ НЕБЕЗПЕКИ -------------------------- */
+.zones-info {
+  border-top: 1px dashed var(--line);
+  padding-top: 0.9rem;
+}
+.zones-title {
+  font-size: 0.72rem;
+  color: var(--ink-soft);
+  margin-bottom: 0.6rem;
+  letter-spacing: 0.08em;
+}
+.zones-list {
+  display: flex; flex-direction: column; gap: 0.35rem;
+  font-family: var(--font-mono);
+}
+.zones-list li {
+  display: flex; align-items: center; gap: 0.55rem;
+  font-size: 0.78rem;
+  color: var(--ink-soft);
+}
+.zones-list strong {
+  color: var(--ink);
+  font-weight: 700;
+  margin-right: 0.25rem;
+}
+.zone-dot {
+  width: 9px; height: 9px; border-radius: 50%; flex-shrink: 0;
+  box-shadow: 0 0 6px currentColor;
+}
+.zone-dot--safe   { background: #40c040; color: #40c040; }
+.zone-dot--low    { background: #c0c040; color: #c0c040; }
+.zone-dot--warn   { background: #ffaa30; color: #ffaa30; }
+.zone-dot--danger { background: #ff3020; color: #ff3020; }
+
+.calc-note {
+  font-size: 0.78rem;
+  color: var(--ink-soft);
+  padding-top: 0.7rem;
+  border-top: 1px dashed var(--line);
+  font-family: var(--font-mono);
+  line-height: 1.45;
+}
+
+/* -- БЛОК "ПРО ПРОЄКТ" ----------------------- */
+.project-about {
+  padding: clamp(2rem, 6vw, 4rem) clamp(1rem, 4vw, 3rem);
+  border-top: 1px solid var(--line);
+}
+.about-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: clamp(2rem, 5vw, 3.5rem);
+}
+.about-grid h2 {
+  font-family: var(--font-display);
+  font-size: clamp(1.4rem, 3vw, 2rem);
+  margin-bottom: 1rem;
+  color: var(--accent);
+  text-transform: var(--h2-transform);
+}
+body.dark .about-grid h2::before { content: '// '; color: var(--ink-soft); }
+
+.about-grid p {
+  margin-bottom: 1rem;
+  color: var(--ink-soft);
+  font-size: 0.92rem;
+  line-height: 1.6;
+}
+.about-grid em { color: var(--accent); font-style: normal; }
+.tech-list { display: flex; flex-direction: column; gap: 0.6rem; font-family: var(--font-mono); }
+.tech-list li {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 0.9rem;
+  padding: 0.6rem 0;
+  border-bottom: 1px dashed var(--line);
+  color: var(--ink-soft);
+  font-size: 0.88rem;
+  line-height: 1.5;
+}
+.tech-list .mono { color: var(--accent); }
+
+/* -- АДАПТИВ --------------------------------- */
+@media (max-width: 1024px) {
+  .project-main, .about-grid { grid-template-columns: 1fr; }
+}
+@media (max-width: 480px) {
+  .scene { min-height: 330px; aspect-ratio: 1 / 1; }
+  .geiger-value { font-size: 2.1rem; }
+}

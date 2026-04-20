@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="3D-модель ЧАЕС із реалістичним лічильником радіації — проєкт Наташі Білоус на Three.js.">
+  <title>Проєкт · ЧАЕС 3D з лічильником радіації</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=VT323&family=IBM+Plex+Mono:wght@400;500;700&family=Rozha+One&family=Cutive+Mono&display=swap" rel="stylesheet">
+
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="css/project.css">
+</head>
+<body class="dark">
+
+  <div class="grain" aria-hidden="true"></div>
+
+  <header class="site-header">
+    <div class="container header-inner">
+      <a href="index.html" class="logo">
+        <span class="logo-mark">N</span>
+        <span class="logo-text">personal.page</span>
+      </a>
+      <nav class="site-nav">
+        <ul>
+          <li><a href="index.html">← Назад на головну</a></li>
+        </ul>
+      </nav>
+      <div class="theme-switch" role="group" aria-label="Перемикач теми">
+        <button type="button" id="btn-light" class="theme-btn" aria-pressed="false">☀ Світла</button>
+        <button type="button" id="btn-dark" class="theme-btn is-active" aria-pressed="true">☾ Темна</button>
+      </div>
+    </div>
+  </header>
+
+  <main>
+
+    <section class="project-hero">
+      <div class="container">
+        <span class="eyebrow" style="color: var(--accent);">Проєкт · 3D × S.T.A.L.K.E.R.</span>
+        <h1 class="project-title">ЧАЕС<span class="project-title-accent"> · 1986</span></h1>
+        <p class="project-lead">
+          3D-модель 4-го енергоблоку Чорнобильської АЕС у вигляді до вибуху. Обертай сцену мишею — лічильник Гейгера буде біпати інтенсивніше, коли наближаєшся до реактора. Чим ближче — тим вищий рівень радіації.
+        </p>
+      </div>
+    </section>
+
+    <section class="project-main container">
+
+      <!-- 3D-сцена -->
+      <div class="scene-wrap">
+        <div id="scene" class="scene" aria-label="3D-модель ЧАЕС"></div>
+        <div class="scene-hint">
+          <span class="mono">← тягніть мишею для обертання · scroll для зуму · клавіша М — вимкнути звук →</span>
+        </div>
+      </div>
+
+      <!-- Лічильник радіації -->
+      <aside class="calc-panel">
+        <h2 class="calc-title">Лічильник Гейгера</h2>
+
+        <!-- Цифровий дисплей -->
+        <div class="geiger-display">
+          <div class="geiger-value mono" id="geiger-value">0.00</div>
+          <div class="geiger-unit mono">µSv / h</div>
+          <div class="geiger-leds">
+            <span class="led led--safe" id="led-safe"></span>
+            <span class="led led--warn" id="led-warn"></span>
+            <span class="led led--danger" id="led-danger"></span>
+          </div>
+        </div>
+
+        <!-- Інформація про рівень -->
+        <div class="calc-results">
+          <div class="result-row">
+            <span class="result-label">Відстань до реактора</span>
+            <span class="result-value mono" id="r-distance">—</span>
+          </div>
+          <div class="result-row">
+            <span class="result-label">Зона загрози</span>
+            <span class="result-value result-value--accent mono" id="r-zone">—</span>
+          </div>
+          <div class="result-row">
+            <span class="result-label">Частота біпів</span>
+            <span class="result-value mono" id="r-beeps">—</span>
+          </div>
+        </div>
+
+        <!-- Шкала зон -->
+        <div class="zones-info">
+          <h3 class="zones-title mono">Рівні небезпеки</h3>
+          <ul class="zones-list">
+            <li><span class="zone-dot zone-dot--safe"></span><strong>Безпечна зона:</strong> &lt; 0.3 µSv/h</li>
+            <li><span class="zone-dot zone-dot--low"></span><strong>Помірна:</strong> 0.3 – 5 µSv/h</li>
+            <li><span class="zone-dot zone-dot--warn"></span><strong>Підвищена:</strong> 5 – 100 µSv/h</li>
+            <li><span class="zone-dot zone-dot--danger"></span><strong>Небезпечна:</strong> &gt; 100 µSv/h</li>
+          </ul>
+        </div>
+
+        <p class="calc-note">
+          Модель художня, не відповідає реальним масштабам та даним. Реальний рівень радіації біля саркофагу ЧАЕС сьогодні становить близько 3–5 µSv/h на поверхні.
+        </p>
+      </aside>
+
+    </section>
+
+    <section class="project-about container">
+      <div class="about-grid">
+        <div>
+          <h2>Про проєкт</h2>
+          <p>
+            Я люблю атмосферу серії ігор <em>S.T.A.L.K.E.R.</em> — українська історія, Зона, артефакти, тривожна музика. Вирішила зробити 3D-модель ЧАЕС у тому вигляді, якою вона була до аварії 1986 року, і додати інтерактивний лічильник Гейгера, який реагує на положення камери.
+          </p>
+          <p>
+            Стек: <span class="mono">HTML · CSS · vanilla JavaScript · Three.js (r128) · Web Audio API</span>. Без фреймворків, без бандлерів — усе вантажиться з CDN.
+          </p>
+        </div>
+        <div>
+          <h2>Технічні деталі</h2>
+          <ul class="tech-list">
+            <li><span class="mono">01</span> 3D-модель зібрана з примітивів Three.js: BoxGeometry для корпусів, CylinderGeometry для труб та вентиляції.</li>
+            <li><span class="mono">02</span> OrbitControls обмежені — камера не може пройти крізь підлогу, мінімальна/максимальна відстань задані.</li>
+            <li><span class="mono">03</span> Рівень радіації обчислюється як 1/r² (квадратичне спадання), де r — відстань від реактора до камери.</li>
+            <li><span class="mono">04</span> Біпи генеруються через Web Audio API: OscillatorNode з квадратною хвилею, частота 850 Гц, модульована GainNode.</li>
+            <li><span class="mono">05</span> Періодичність біпів пропорційна рівню радіації: чим ближче — тим частіше.</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <footer class="site-footer">
+    <div class="container footer-inner">
+      <p>© 2026 · Наташа Білоус</p>
+      <p><a href="index.html">← Повернутись на головну сторінку</a></p>
+    </div>
+  </footer>
+
+  <!-- Three.js з CDN — зафіксована версія r128 -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
+
+  <script src="js/theme.js"></script>
+  <script src="js/chaes-3d.js"></script>
+</body>
+</html>
